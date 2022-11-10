@@ -1,11 +1,91 @@
 # JPA N+1 정리
+- Jpa를 이용한 쿼리 실행 시, 각 row 별 연관관계 쿼리를 실행하는 문제로 row의 수만큼 N번 실행되는 현상을 말한다.
 
-## Eager
-- findById 같은 메소드는 문제가 없지만 findAll 같은 메소드를 실행하면 자식 메소드까지 영속화 하기 위해서 N+1만큼의 쿼리가 실행되게 된다.
+## 즉시 로딩 (Eager Loading)
+- 해당 entity와 연관된 entity까지 모두 조회하는 방식
+- findById 같은 @Id 기준 쿼리 조회를 제외하는 경우에서 최초 쿼리 실행 후 그 연관관계를 조회하기 위해 N+1 만큼의 쿼리가 실행 된다. 
+- findAll 같은 메소드를 실행하면 자식 메소드까지 영속화 하기 위해서 N+1만큼의 쿼리가 실행되게 된다.
 - 즉시로딩의 경우 findById(@ID)를 사용하는 경우는 자체적으로 inner join 형태의 쿼리를 만들어서 조회하기 때문에 n+1 문제가 발생하지 않는다.
-- 하지만 그 외에 경우에는 최적화를 하지 못하므로 쿼리가 여러번 실행되게 된다.
+- 하지만 그 외에 경우에는 쿼리를 최적화를 하지 못하므로 여러번 실행되게 된다.
 
-## Lazy
+### 예제
+#### Entity
+```java
+public class Member {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.EAGER)
+    private List<Price> priceList = new ArrayList<>();
+}
+```
+```java
+public class Price {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private Long price;
+
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
+}
+```
+- Member와 Price는 1:N 관계
+
+#### Test
+```java
+@Test
+void manyToOneTest() {
+
+    Price price = Price.builder()
+        .price(90000L)
+        .build();
+
+    priceRepository.save(price);
+
+    Member member1 = Member.builder()
+        .name("one")
+        .build();
+
+    Member member2 = Member.builder()
+        .name("one")
+        .build();
+
+    memberRepository.save(member1);
+    memberRepository.save(member2);
+
+    List<Member> all = memberRepository.findAll();
+}
+```
+- price를 2개 입력하고 member는 1개 입력한 후 findAll() 메소드 실행
+
+#### 결과
+![img_6.png](img_6.png)
+
+- 입력한 price의 수만큼 price 조회 쿼리 실행
+
+### 해결 방법
+1. 지연 로딩 사용
+    - 지연 로딩을 사용한다고 N+1 문제가 발생 안하지는 않지만 아래쪽 지연 로딩 쪽에서 해결 방법을 설명
+    - entity 설계 시 기본적으로 지연 로딩으로 설정해두고 사용하는것을 추천.
+2. Batch Size 사용
+    - batch size를 설정하면 in 쿼리 형태로 아래와 같이 실행된다.
+```
+spring:
+  jpa:
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+```
+![img_7.png](img_7.png)
+  
+## 즉시 로딩 (Lazy Loading)
+- 연관된 entity를 프록시 객체로 가지고 있고 실제로는 해당하는 entity만 조회하는 방식
 - 어떤 메소드를 사용하던 쿼리는 한번만 실행되겠지만, 자식 메소드(현재 프록시 객체)를 사용하게 되는 순간 N+1의 쿼리가 실행되게 된다.
 
 ## Fetch join
