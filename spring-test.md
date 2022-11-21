@@ -25,26 +25,62 @@
     - 이유는 아래 코드를 보면 이해할 수 있다.
 - Mockito
     ```java
-    //given
-    when(seller.askForBread()).thenReturn(new Bread());
+    @ExtendWith(MockitoExtension.class)
+    @Slf4j
+    class ServiceTest {
     
-    //when
-    Goods goods = shop.buyBread();
+        @Mock
+        private MemberService memberService;
     
-    //then
-    assertThat(goods, containBread());
+        @Test
+        void test() {
+    
+            MemberDto memberDto = MemberDto.builder()
+                .user("user1")
+                .build();
+  
+            // given
+            when(memberService.getMember(any()))
+                .willReturn("user1");
+    
+            // when
+            MemberDto resultMemberDto = memberService
+                .getMember(1);
+    
+            // then
+            assertThat(resultMemberDto.getUser()).isEqualTo("user1");
+        }
+    }
     ```
     - ```given```에 해당하는 부분에 ```when``` 메소드를 사용해야 함.
 - BDDMockito
     ```java
-    //given  
-    given(seller.askForBread()).willReturn(new Bread());
+    @ExtendWith(MockitoExtension.class)
+    @Slf4j
+    class ServiceTest {
     
-    //when
-    Goods goods = shop.buyBread();
+        @Mock
+        private MemberService memberService;
     
-    //then
-    assertThat(goods, containBread());
+        @Test
+        void test() {
+    
+            MemberDto memberDto = MemberDto.builder()
+                .user("user1")
+                .build();
+  
+            // given
+            given(memberService.getMember(any()))
+                .willReturn("user1");
+    
+            // when
+            MemberDto resultMemberDto = memberService
+                .getMember(1);
+    
+            // then
+            assertThat(resultMemberDto.getUser()).isEqualTo("user1");
+        }
+    }
     ```
     - ```given```에 해당하는 부분에 ```given``` 메소드를 넣어 주어 이해하기 쉽다.
 
