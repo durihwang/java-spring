@@ -27,7 +27,7 @@ private OrderSpecifier[] getAllOrder(Pageable pageable) {
             // sort의 순서가 ASC인지 DESC인지 확인
             Order direction = sort.getDirection().isAscending() ? Order.ASC : Order.DESC;
             
-            // 프로퍼니에 따라서 오더링 기준 컬럼을 넣어 OrderSpecifier를 생성한다.
+            // 프로퍼티에 따라서 오더링 기준 컬럼을 넣어 OrderSpecifier를 생성한다.
             return switch (sort.getProperty()) {
                 case "seqno" -> new OrderSpecifier(direction, billTaxInfo.seqNo);
                 case "alias" -> new OrderSpecifier(direction, billTaxInfo.alias);
@@ -37,6 +37,7 @@ private OrderSpecifier[] getAllOrder(Pageable pageable) {
         }).toArray(OrderSpecifier[]::new);
     }
 
+    // sort 파라미터가 없는 경우에는 기본 order 조건을 넣어준다. (null은 허용하지 않기 때문)
     if (orderSpecifiers == null) {
         orderSpecifiers = Stream.of(new OrderSpecifier(Order.DESC, billTaxInfo.seqNo))
             .toArray(OrderSpecifier[]::new);
