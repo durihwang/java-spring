@@ -46,8 +46,6 @@ private OrderSpecifier[] getAllOrder(Pageable pageable) {
     return orderSpecifiers;
 }
 ```
-- 위처럼 ```getSort()``` 메소드의 ```getProperty()```를 직접 ```OrderSpecifier``` 클래스에 넣어주지 않고 ```Qclass```를 사용한 이유는 ```@QueryProjection```을 이용하여 ```select```를 하는 경우에는 ```entity```와 ```querydto```가 연결이 안되기 때문이다.
-- ```selectFrom()```메소드를 사용하는 경우라면 ```OrderSpecifier``` 생성 시 ```sort```로 전달 받은 프로퍼티 값을 그대로 넣어주어도 무방하다.
 
 ## 네이티브 SQL
 
