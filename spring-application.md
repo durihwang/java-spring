@@ -13,7 +13,7 @@
 ### HierarchicalBeanFactory
 부모 자식 관계 설정을 위한 인터페이스이다.
 > Hierarchical는 계층적 이라는 뜻이다.
-
+w
 ### AutowireCapableBeanFactory
 
 > 합성 관계란 (has-a) 전체를 표현하는 객체가 부분을 표현하는 객체를 포함해서 부분 객체의 코드를 재사용 하는 것을 말한다.
