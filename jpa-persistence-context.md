@@ -5,7 +5,10 @@
 - ```Spring```에서는 보통 ```Entity Manager```를 주입하여 사용하고 같은 트랜잭션 범위에 있는 ```Entity Manager```는 같은 ```Persistence Context```에 접근하게 된다.
 
 ## 비영속(new/transient)
-
+- 객체만 생성한 상태
+```java
+Member member = new Member(1L, "vision");
+```
 ## 영속(managed)
 
 ## 준영속(detached)
