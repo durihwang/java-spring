@@ -12,6 +12,9 @@
 ## Controller 테스트
 
 - ```@WebMvcTest```를 이용하여 컨트롤러와 연관된 bean만 제한적으로 등록
+- https://mangkyu.tistory.com/244
+- https://mangkyu.tistory.com/242
+- https://mangkyu.tistory.com/245
 
 ## Service 테스트
 
