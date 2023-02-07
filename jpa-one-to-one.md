@@ -1,4 +1,4 @@
-#[Spring] JPA @OneToOne Lazy Loading
+# Spring JPA @OneToOne Lazy Loading
 
 # 목표
 JPA 연관관계 사용 시 헷갈렸던 부분을 확인해보자.
